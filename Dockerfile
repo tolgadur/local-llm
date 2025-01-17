@@ -4,8 +4,8 @@ FROM python:3.11
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
-    OMP_NUM_THREADS=1 \
-    MKL_NUM_THREADS=1
+    OMP_NUM_THREADS=${OMP_NUM_THREADS:-8} \
+    MKL_NUM_THREADS=${MKL_NUM_THREADS:-8}
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -29,11 +29,11 @@ COPY . .
 RUN mkdir -p models
 
 # Expose the FastAPI port
-EXPOSE 5000
+EXPOSE 8081
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:5000/health || exit 1
+    CMD curl -f http://localhost:8081/health || exit 1
 
 # Set the entrypoint
 CMD ["python", "app/main.py"]
