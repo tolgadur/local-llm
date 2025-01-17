@@ -3,7 +3,6 @@ FROM python:3.11
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    MODEL_PATH=/app/models/Llama-3.2-1B-Instruct \
     PYTHONPATH=/app \
     OMP_NUM_THREADS=1 \
     MKL_NUM_THREADS=1
