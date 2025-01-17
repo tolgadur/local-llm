@@ -3,3 +3,4 @@ sentencepiece
 numpy
 flask
 pytest
+python-dotenv
