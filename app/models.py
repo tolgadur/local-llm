@@ -9,4 +9,5 @@ LOCAL_MODEL_CPU = pipeline(
     device_map="cpu",
     token=HUGGINGFACE_TOKEN,
     model_kwargs={"low_cpu_mem_usage": True},
+    return_full_text=False,
 )
