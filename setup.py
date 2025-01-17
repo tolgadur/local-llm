@@ -8,11 +8,10 @@ setup(
         "torch",
         "transformers",
         "accelerate",
+        "python-dotenv",
         "sentencepiece",
         "pytest",
-        "python-dotenv",
-        "datasets",
         "evaluate",
-        "tqdm",
     ],
+    dependency_links=["https://download.pytorch.org/whl/cpu"],
 )
