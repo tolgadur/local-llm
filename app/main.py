@@ -1,22 +1,29 @@
-import torch
-from transformers import pipeline
-from config import MODEL_PATH, HUGGINGFACE_TOKEN
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from models import LOCAL_MODEL_CPU
+import uvicorn
+
+app = FastAPI(title="Local LLM API")
 
 
-def main():
-    local_model_cpu = pipeline(
-        "text-generation",
-        model=MODEL_PATH,
-        torch_dtype=torch.float32,
-        device_map="cpu",
-        token=HUGGINGFACE_TOKEN,
-        model_kwargs={"low_cpu_mem_usage": True},
-    )
+class GenerateRequest(BaseModel):
+    prompt: str
+    max_tokens: int = 50
 
-    prompt = "What is machine learning?"
-    response = local_model_cpu(prompt, max_new_tokens=50)
-    print(response)
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
+
+@app.post("/generate")
+def generate_text(request: GenerateRequest):
+    try:
+        response = LOCAL_MODEL_CPU(request.prompt, max_new_tokens=request.max_tokens)
+        return {"response": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":
-    main()
+    uvicorn.run(app, host="0.0.0.0", port=8081)

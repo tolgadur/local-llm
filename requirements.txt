@@ -6,3 +6,6 @@ python-dotenv
 sentencepiece
 pytest
 evaluate
+fastapi
+uvicorn[standard]
+pydantic
