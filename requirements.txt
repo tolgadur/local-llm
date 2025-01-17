@@ -1,6 +1,3 @@
 torch
-sentencepiece
-numpy
-flask
-pytest
+transformers
 python-dotenv

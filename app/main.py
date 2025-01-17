@@ -1,16 +1,17 @@
-from app.tokenizer import Tokenizer
-from app.model import Model
-from app.config import TOKENIZER_PATH
+from app.local_model import LocalModel
 
 
 def main():
-    tokenizer = Tokenizer(TOKENIZER_PATH)
-    model = Model(tokenizer)
+    model = LocalModel()
 
-    # Example usage
-    prompt = "Hello, how are you?"
-    response = model.generate(prompt, max_length=100, temperature=0.8)
-    print(response)
+    # Test with a simple prompt
+    prompt = "What is machine learning?"
+
+    try:
+        response = model.generate(prompt=prompt)
+        print("\nResponse:", response)
+    except Exception as e:
+        print(f"\nError: {str(e)}")
 
 
 if __name__ == "__main__":
