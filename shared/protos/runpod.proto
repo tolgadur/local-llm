@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package runpod;
+
+service RunpodService {
+  rpc Process (RunpodRequest) returns (RunpodResponse) {}
+}
+
+message RunpodRequest {
+  optional string text = 1;
+  optional bytes image_data = 2;
+  optional string image_format = 3;  // Required when image_data is present
+  map<string, string> parameters = 4;
+}
+
+message RunpodResponse {
+  optional string text_result = 1;
+  optional bytes image_data = 2;
+  optional string image_format = 3;  // Required when image_data is present
+  bool success = 4;
+  string error_message = 5;
+} 

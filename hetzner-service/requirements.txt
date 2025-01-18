@@ -9,3 +9,6 @@ evaluate
 fastapi
 uvicorn[standard]
 pydantic
+grpcio
+grpcio-tools
+protobuf

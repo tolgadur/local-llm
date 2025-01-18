@@ -1,11 +1,9 @@
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
 load_dotenv()
 
 HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 MODEL_PATH = os.getenv("MODEL_PATH")
-
-# Verify model path exists
-if not os.path.exists(MODEL_PATH):
-    raise ValueError(f"Model path does not exist: {MODEL_PATH}")
+RUNPOD_HOST = os.getenv("RUNPOD_HOST", "localhost")
+RUNPOD_PORT = int(os.getenv("RUNPOD_PORT", "50051"))

@@ -3,3 +3,6 @@ transformers
 torch
 numpy
 python-dotenv
+grpcio
+grpcio-tools
+protobuf

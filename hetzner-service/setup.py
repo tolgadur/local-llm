@@ -16,6 +16,9 @@ setup(
         "fastapi",
         "uvicorn[standard]",
         "pydantic",
+        "grpcio",
+        "grpcio-tools",
+        "protobuf",
     ],
     dependency_links=["https://download.pytorch.org/whl/cpu"],
 )
