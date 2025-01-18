@@ -1,0 +1,5 @@
+runpod
+transformers
+torch
+numpy
+python-dotenv

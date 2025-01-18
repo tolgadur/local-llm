@@ -1,26 +1,73 @@
-*.egg-info/
-*.pyc
+# Python
 __pycache__/
-.env
-settings.json
-Llama-3.2-1B-Instruct*
-
-# Build directories
+*.py[cod]
+*$py.class
+*.so
+.Python
 build/
+develop-eggs/
 dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Python virtual environments
-venv/
+# Environment
+.env
+.venv
 env/
-.venv/
-.env/
+venv/
+ENV/
+.conda/
+.python-version
+pip-log.txt
+pip-delete-this-directory.txt
 
-# IDE specific files
+# IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+.project
+.pydevproject
+.settings/
+*.sublime-workspace
+*.sublime-project
 
-# OS specific files
+# OS
 .DS_Store
 Thumbs.db
+*.bak
+*.tmp
+*~
+
+# Project specific
+models/
+logs/
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Service specific
+hetzner-service/models/*
+runpod-service/models/*
+**/local_settings.py
+**/production_settings.py

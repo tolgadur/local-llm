@@ -1,53 +1,74 @@
-# Local LLM API
+# Local LLM Services
 
-A FastAPI service that runs LLama models locally for text generation.
+This monorepo contains services for deploying and managing local large language models across different cloud platforms.
 
 ## Project Structure
 
-local-llm/
-├── app/
-│   ├── config.py      # Environment and configuration settings
-│   ├── main.py        # FastAPI application and endpoints
-│   └── models.py      # Model initialization and pipeline setup
-├── .env               # Environment variables (not in git)
-├── Dockerfile
-└── README.md
-
-## Setup
-
-1. Create a `.env` file with your configuration:
-
-```bash
-MODEL_PATH=/root/models/Llama-3.2-1B-Instruct
-HUGGINGFACE_TOKEN=your_token_here
+```plaintext
+.
+├── hetzner-service/     # Main LLM service running on Hetzner Cloud
+│   ├── app/
+│   ├── models/
+│   ├── tests/
+│   └── ...
+└── runpod-service/      # Serverless LLM service on RunPod
+    ├── app/
+    └── ...
 ```
 
-## Running the Application
+## Services
 
-To build and run the Docker container, follow these steps:
+### Hetzner Service
 
-1. Build the Docker image:
+Located in `/hetzner-service`
 
-   ```bash
-   docker build -t local-llm .
-   ```
+- Main service for running and managing LLMs on Hetzner Cloud
+- FastAPI-based REST API for model inference
+- Supports multiple model formats and configurations
+- Optimized for dedicated GPU instances
+- See [hetzner-service/README.md](hetzner-service/README.md) for setup and deployment
 
-2. Run the Docker container with a volume reference to your model:
+### RunPod Service
 
-   ```bash
-   docker run -d --env-file .env -v /root/models:/root/models -p 8081:8081 local-llm
-   ```
+Located in `/runpod-service`
 
-Replace `/root/models` with the actual path to your model directory on your host machine.
+- Serverless service for running LLMs on RunPod's infrastructure
+- Event-driven architecture for scalable inference
+- Pay-per-use pricing model
+- Automatic scaling based on demand
+- See [runpod-service/README.md](runpod-service/README.md) for setup and deployment
 
-## Accessing the API
+## Development
 
-Once the container is running, you can access the FastAPI application at `http://localhost:8081`.
+Each service has its own development environment and requirements. Please refer to the individual service READMEs for specific setup instructions.
 
-You can use the `curl` command to test the API:
+### Common Setup Steps
+
+Clone the repository:
 
 ```bash
-curl -X POST http://95.217.106.119:8081/generate \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "Write a short poem about coding:", "max_length": 100}' | jq
+git clone https://github.com/yourusername/local-llm.git
+cd local-llm
 ```
+
+Choose a service to work on and follow its README instructions
+
+### Development Guidelines
+
+- Each service maintains its own virtual environment
+- Follow Python best practices (PEP 8)
+- Write tests for new features
+- Keep dependencies up to date
+- Document API changes
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Make your changes
+4. Write/update tests
+5. Submit a pull request
+
+## License
+
+This project is licensed under the terms specified in the LICENSE file.
