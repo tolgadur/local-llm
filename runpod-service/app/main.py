@@ -3,7 +3,7 @@ from concurrent import futures
 import io
 from PIL import Image
 from app.config import GRPC_PORT
-from app.models import LLAMA11B
+from app.models import LLAMA11B_TEXT, LLAMA11B_VISION
 from protos.runpod_pb2 import RunpodResponse
 from protos.runpod_pb2_grpc import (
     RunpodServiceServicer,
@@ -42,27 +42,44 @@ class RunpodServicer(RunpodServiceServicer):
                 # Run inference with the model
                 logger.info("Starting model inference")
 
-                # Prepare image if provided
-                image = None
+                # Set up model parameters
+                model_kwargs = {
+                    "max_new_tokens": 512,
+                    "do_sample": True,
+                    "temperature": 0.7,
+                }
+
+                # Initialize result variable
+                result = None
+
                 if request.image_data:
+                    # Use vision pipeline for image + text
                     try:
                         image = Image.open(io.BytesIO(request.image_data))
                         logger.info(
                             "Successfully loaded image of format: "
                             f"{request.image_format}"
                         )
+                        logger.info("Starting vision model inference...")
+                        result = LLAMA11B_VISION(
+                            text=request.text, images=image, **model_kwargs
+                        )
+                        logger.info("Vision model inference completed")
                     except Exception as img_error:
                         error_msg = f"Failed to process image: {str(img_error)}"
                         logger.error(error_msg, exc_info=True)
                         return RunpodResponse(success=False, error_message=error_msg)
+                else:
+                    # Use text-only pipeline
+                    logger.info("Starting text-only model inference...")
+                    result = LLAMA11B_TEXT(text_inputs=request.text, **model_kwargs)
+                    logger.info("Text-only model inference completed")
 
-                result = LLAMA11B(
-                    text=request.text,
-                    images=image,
-                    max_new_tokens=512,
-                    do_sample=True,
-                    temperature=0.7,
-                )
+                if result is None:
+                    error_msg = "Model inference failed to produce a result"
+                    logger.error(error_msg)
+                    return RunpodResponse(success=False, error_message=error_msg)
+
                 logger.info("Model inference completed successfully")
 
                 # Extract the generated text
