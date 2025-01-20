@@ -68,7 +68,7 @@ uvicorn app.main:app --reload --port 8081
 Build the Docker image:
 
 ```bash
-docker build -t hetzner-llm-service .
+docker build -t hetzner-service .
 ```
 
 Run on Hetzner:
@@ -76,7 +76,7 @@ Run on Hetzner:
 ```bash
 docker run -d --env-file .env \
   -v /path/to/models:/app/models \
-  -p 8081:8081 hetzner-llm-service
+  -p 8081:8081 hetzner-service
 ```
 
 ## API Usage
