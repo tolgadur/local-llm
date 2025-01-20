@@ -60,14 +60,10 @@ pip install -r requirements.txt
 python app/main.py
 ```
 
-Test the handler function:
+Use grpcurl to test the service:
 
-```python
-from app.main import handler
-
-# Test with sample input
-result = handler({"input": {"prompt": "Hello, how are you?"}})
-print(result)
+```bash
+grpcurl -plaintext -d '{"text": "What do you see in this image?"}' localhost:50051 runpod.RunpodService/Inference
 ```
 
 ## Deployment
