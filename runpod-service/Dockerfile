@@ -1,13 +1,15 @@
 FROM runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel
 
 # Build arguments for model configuration
-ARG MODEL_DIR=/tmp/models/llama-vision
+ARG MODEL_DIR=./models/llama-vision
+ARG HUGGINGFACE_TOKEN
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
     MODEL_PATH=${MODEL_DIR} \
+    HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN} \
     OMP_NUM_THREADS=${OMP_NUM_THREADS:-8} \
     MKL_NUM_THREADS=${MKL_NUM_THREADS:-8}
 
@@ -24,11 +26,16 @@ WORKDIR /app
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .
 
-# Install Python dependencies and huggingface_cli
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Create model directory
-RUN mkdir -p ${MODEL_DIR} && chmod 777 ${MODEL_DIR}
+# Create model directory and download model
+RUN mkdir -p ${MODEL_DIR} && \
+    huggingface-cli download --token ${HUGGINGFACE_TOKEN} \
+    meta-llama/Llama-3.2-11B-Vision-Instruct \
+    --local-dir ${MODEL_DIR} \
+    --exclude "original/*" \
+    --local-dir-use-symlinks False
 
 # Copy the rest of the application
 COPY . .
