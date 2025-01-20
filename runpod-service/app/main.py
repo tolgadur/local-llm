@@ -40,7 +40,7 @@ class RunpodServicer(RunpodServiceServicer):
 
             try:
                 # Run inference with the model
-                logger.info("Starting model inference")
+                logger.info("=== Starting Inference ===")
 
                 # Set up model parameters
                 model_kwargs = {
@@ -56,35 +56,32 @@ class RunpodServicer(RunpodServiceServicer):
                     # Use vision pipeline for image + text
                     try:
                         image = Image.open(io.BytesIO(request.image_data))
-                        logger.info(
-                            "Successfully loaded image of format: "
-                            f"{request.image_format}"
-                        )
-                        logger.info("Starting vision model inference...")
+                        logger.info(f"✓ Image loaded (format: {request.image_format})")
+
+                        logger.info("Running vision model inference...")
                         result = LLAMA11B_VISION(
                             text=request.text, images=image, **model_kwargs
                         )
-                        logger.info("Vision model inference completed")
+                        logger.info("✓ Vision inference complete")
                     except Exception as img_error:
                         error_msg = f"Failed to process image: {str(img_error)}"
                         logger.error(error_msg, exc_info=True)
                         return RunpodResponse(success=False, error_message=error_msg)
                 else:
                     # Use text-only pipeline
-                    logger.info("Starting text-only model inference...")
+                    logger.info("Running text-only inference...")
                     result = LLAMA11B_TEXT(text_inputs=request.text, **model_kwargs)
-                    logger.info("Text-only model inference completed")
+                    logger.info("✓ Text inference complete")
 
                 if result is None:
                     error_msg = "Model inference failed to produce a result"
                     logger.error(error_msg)
                     return RunpodResponse(success=False, error_message=error_msg)
 
-                logger.info("Model inference completed successfully")
-
                 # Extract the generated text
                 response.text_result = result[0]["generated_text"]
                 response.success = True
+                logger.info("=== Inference Complete ===\n")
 
             except Exception as model_error:
                 error_msg = f"Model inference failed: {str(model_error)}"
