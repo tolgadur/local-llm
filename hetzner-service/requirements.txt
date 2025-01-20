@@ -12,3 +12,4 @@ pydantic
 grpcio
 grpcio-tools
 protobuf
+huggingface_hub

@@ -19,6 +19,7 @@ setup(
         "grpcio",
         "grpcio-tools",
         "protobuf",
+        "huggingface_hub"
     ],
     dependency_links=["https://download.pytorch.org/whl/cpu"],
 )

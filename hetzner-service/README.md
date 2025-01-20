@@ -68,15 +68,13 @@ uvicorn app.main:app --reload --port 8081
 Build the Docker image:
 
 ```bash
-docker build -t hetzner-service .
+docker build --build-arg HUGGINGFACE_TOKEN=your_secret_token .
 ```
 
 Run on Hetzner:
 
 ```bash
-docker run -d --env-file .env \
-  -v /path/to/models:/app/models \
-  -p 8081:8081 hetzner-service
+docker run -d --env-file .env -p 8081:8081 hetzner-service
 ```
 
 ## API Usage

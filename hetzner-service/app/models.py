@@ -1,6 +1,13 @@
 import torch
+import os
 from transformers import pipeline
 from app.config import MODEL_PATH, HUGGINGFACE_TOKEN
+
+if not os.path.exists(MODEL_PATH):
+    raise ValueError(
+        f"Model path {MODEL_PATH} does not exist. "
+        "Please make sure the model is downloaded."
+    )
 
 LOCAL_MODEL_CPU = pipeline(
     "text-generation",
