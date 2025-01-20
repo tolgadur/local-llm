@@ -1,6 +1,6 @@
 import torch
 from transformers import pipeline
-from config import MODEL_PATH, HUGGINGFACE_TOKEN
+from app.config import MODEL_PATH, HUGGINGFACE_TOKEN
 
 LOCAL_MODEL_CPU = pipeline(
     "text-generation",

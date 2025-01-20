@@ -13,6 +13,7 @@ setup(
         "grpcio",
         "grpcio-tools",
         "protobuf",
+        "grpcio-reflection",
     ],
     author="Your Name",
     author_email="your.email@example.com",

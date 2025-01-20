@@ -1,19 +1,26 @@
-from dataclasses import dataclass
 from typing import Optional, Dict
+from pydantic import BaseModel
 
 
-@dataclass
-class RunpodRequest:
-    text: Optional[str] = None
-    image_data: Optional[bytes] = None
+class InternalGenerateRequest(BaseModel):
+    prompt: str
+    max_tokens: int = 100
+
+
+class InternalRunpodRequest(BaseModel):
+    """Request model for Runpod service calls"""
+
+    text: str = None
+    image: Optional[bytes] = None
     image_format: Optional[str] = None
     parameters: Optional[Dict[str, str]] = None
 
 
-@dataclass
-class RunpodResponse:
+class InternalRunpodResponse(BaseModel):
+    """Response model for Runpod service calls"""
+
     success: bool
-    error_message: str
-    text_result: Optional[str] = None
+    error_message: Optional[str] = None
+    text_result: str  # Not optional - will always be present on success
     image_data: Optional[bytes] = None
     image_format: Optional[str] = None

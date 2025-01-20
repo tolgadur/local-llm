@@ -9,6 +9,7 @@ runpod-service/
 ├── app/
 │   ├── __init__.py
 │   └── main.py      # RunPod serverless handler and model logic
+├── protos/          # Generated gRPC code
 ├── .env             # Environment variables (not in git)
 ├── Dockerfile
 └── requirements.txt
@@ -22,14 +23,27 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Configure environment variables:
-
-Create a `.env` file with:
+Generate gRPC code from proto file:
 
 ```bash
+python -m grpc_tools.protoc -I=shared/protos --python_out=hetzner-service/protos --pyi_out=hetzner-service/protos --grpc_python_out=hetzner-service/protos shared/protos/runpod.proto
+
+python -m grpc_tools.protoc -I=shared/protos --python_out=runpod-service/protos --pyi_out=runpod-service/protos --grpc_python_out=runpod-service/protos shared/protos/runpod.proto
+```
+
+Configure environment variables:
+
+```bash
+GRPC_PORT=50051
 RUNPOD_API_KEY=your_api_key
 MODEL_PATH=/path/to/model
 HUGGINGFACE_TOKEN=your_token_here  # If using Hugging Face models
+```
+
+Start the service:
+
+```bash
+PYTHONPATH=. python -m app.main
 ```
 
 ## Development
@@ -96,3 +110,7 @@ job = endpoint.run_async({"prompt": "Hello, how are you?"})
 result = job.wait_for_output()
 print(result)
 ```
+
+## gRPC Interface
+
+The service exposes a gRPC interface for text and image processing. See the proto definition in `shared/protos/runpod.proto` for the API specification.
