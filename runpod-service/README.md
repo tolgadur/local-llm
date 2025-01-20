@@ -75,13 +75,13 @@ print(result)
 Build the Docker image:
 
 ```bash
-docker build -t your-registry/runpod-service:latest .
+docker build -t runpod-service .
 ```
 
-Push to your container registry:
+Run the container:
 
 ```bash
-docker push your-registry/runpod-service:latest
+docker run --env-file .env -p 50051:50051 runpod-service
 ```
 
 Deploy on RunPod:

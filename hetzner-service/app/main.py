@@ -2,15 +2,16 @@ from fastapi import FastAPI, HTTPException
 from app.models import LOCAL_MODEL_CPU
 import uvicorn
 from app.runpod_client import RunpodClient
-from app.types import (
+from app.api_types import (
     InternalGenerateRequest,
     InternalRunpodRequest,
     InternalRunpodResponse,
 )
+from app.config import RUNPOD_HOST, RUNPOD_PORT
 import grpc
 
 app = FastAPI(title="Local LLM API")
-runpod_client = RunpodClient()
+runpod_client = RunpodClient(host=RUNPOD_HOST, port=RUNPOD_PORT)
 
 
 @app.get("/health")
@@ -51,7 +52,12 @@ async def process_with_runpod(request: InternalRunpodRequest) -> InternalRunpodR
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except grpc.RpcError as e:
-        raise HTTPException(status_code=500, detail=f"gRPC error: {e.details()}")
+        error_msg = f"gRPC error: code={e.code()}, details={e.details()}"
+        if e.code() == grpc.StatusCode.UNAVAILABLE:
+            error_msg += (
+                f" (Failed to connect to gRPC server at {runpod_client.address})"
+            )
+        raise HTTPException(status_code=500, detail=error_msg)
     except Exception as e:
         return InternalRunpodResponse(success=False, error_message=str(e))
 

@@ -1,11 +1,17 @@
 import grpc
+import logging
 from protos.runpod_pb2 import RunpodRequest
 from protos.runpod_pb2_grpc import RunpodServiceStub
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 class RunpodClient:
     def __init__(self, host="localhost", port="50051"):
-        self.channel = grpc.insecure_channel(f"{host}:{port}")
+        self.address = f"{host}:{port}"
+        logger.info(f"Initializing RunpodClient with address: {self.address}")
+        self.channel = grpc.insecure_channel(self.address)
         self.stub = RunpodServiceStub(self.channel)
 
     def create_request(
@@ -35,9 +41,10 @@ class RunpodClient:
     def process(self, request: RunpodRequest):
         """Process a request through the runpod service"""
         try:
+            logger.debug(f"Attempting gRPC call to {self.address}")
             return self.stub.Inference(request)
         except grpc.RpcError as e:
-            print(f"gRPC error: {e.code()}: {e.details()}")
+            logger.error(f"gRPC error: code={e.code()}, details={e.details()}")
             raise
 
     def close(self):
