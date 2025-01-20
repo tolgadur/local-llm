@@ -1,6 +1,9 @@
 import grpc
 from concurrent import futures
+import io
+from PIL import Image
 from app.config import GRPC_PORT
+from app.models import LLAMA11B
 from protos.runpod_pb2 import RunpodResponse
 from protos.runpod_pb2_grpc import (
     RunpodServiceServicer,
@@ -28,26 +31,55 @@ class RunpodServicer(RunpodServiceServicer):
 
             # Initialize response
             response = RunpodResponse()
-            response.success = True
 
-            # Process text if present
-            if request.text:
-                logger.info(f"Processing text: {request.text}")
-                response.text_result = f"Processed text: {request.text}"
+            # Check if we have text (required)
+            if not request.text:
+                error_msg = "Text input is required for inference"
+                logger.error(error_msg)
+                return RunpodResponse(success=False, error_message=error_msg)
 
-            # Process image if present
-            if request.image_data:
-                logger.info(f"Processing image with format: {request.image_format}")
-                response.image_data = request.image_data
-                response.image_format = request.image_format
+            try:
+                # Run inference with the model
+                logger.info("Starting model inference")
+
+                # Prepare image if provided
+                image = None
+                if request.image_data:
+                    try:
+                        image = Image.open(io.BytesIO(request.image_data))
+                        logger.info(
+                            "Successfully loaded image of format: "
+                            f"{request.image_format}"
+                        )
+                    except Exception as img_error:
+                        error_msg = f"Failed to process image: {str(img_error)}"
+                        logger.error(error_msg, exc_info=True)
+                        return RunpodResponse(success=False, error_message=error_msg)
+
+                result = LLAMA11B(
+                    text=request.text,
+                    images=image,
+                    max_new_tokens=512,
+                    do_sample=True,
+                    temperature=0.7,
+                )
+                logger.info("Model inference completed successfully")
+
+                # Extract the generated text
+                response.text_result = result[0]["generated_text"]
+                response.success = True
+
+            except Exception as model_error:
+                error_msg = f"Model inference failed: {str(model_error)}"
+                logger.error(error_msg, exc_info=True)
+                return RunpodResponse(success=False, error_message=error_msg)
 
             logger.info("Request processed successfully")
             return response
 
         except Exception as e:
             logger.error(f"Error processing request: {str(e)}", exc_info=True)
-            response = RunpodResponse(success=False, error_message=str(e))
-            return response
+            return RunpodResponse(success=False, error_message=str(e))
 
 
 def serve():

@@ -75,7 +75,10 @@ print(result)
 Build the Docker image:
 
 ```bash
-docker build -t runpod-service .
+docker build --platform linux/amd64 \
+  --build-arg HUGGINGFACE_TOKEN=your_secret_token \
+  -t tolgahasandur/local-llm:runpod-service \
+  .
 ```
 
 Run the container:
