@@ -68,7 +68,7 @@ uvicorn app.main:app --reload --port 8081
 Build the Docker image:
 
 ```bash
-docker build --build-arg HUGGINGFACE_TOKEN=your_secret_token .
+docker build --platform linux/amd64 --build-arg HUGGINGFACE_TOKEN=your_secret_token .
 ```
 
 Run on Hetzner:
